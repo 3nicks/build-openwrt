@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: r2c-immo
+name: r2s-immo
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -55,7 +55,7 @@ jobs:
 
     - name: Telegram notification
       run: |
-        curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=🎉 主人：您正在使用 build-openwrt 编译的 r2c_immo 固件,请耐心等待...... 😋" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
+        curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=🎉 主人：您正在使用 build-openwrt 编译的 r2s_immo 固件,请耐心等待...... 😋" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
 
     - name: Initialization environment
       env:
@@ -83,15 +83,6 @@ jobs:
       run: |
         #[ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         
-    - name: Default PPPOE Setting
-      if: env.PPPOE_USERNAME && env.PPPOE_PASSWD
-      run: |
-        # 修改wan口默认pppoe
-        sed -i 's/2:-dhcp/2:-pppoe/g' openwrt/package/base-files/files/lib/functions/uci-defaults.sh
-        # 设置pppoe拨号账户密码
-        sed -i "s/username='username'/username='${{ env.PPPOE_USERNAME }}'/g" openwrt/package/base-files/files/bin/config_generate
-        sed -i "s/password='password'/password='${{ env.PPPOE_PASSWD }}'/g" openwrt/package/base-files/files/bin/config_generate
-
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
 
@@ -140,11 +131,7 @@ jobs:
         rm -rf sha256sums
         rm -rf profiles.json
         rm -rf version.buildinfo
-        #rm -rf immortalwrt-mediatek-mt7981-cmcc_rax3000m.manifest
-        #rm -rf immortalwrt-mediatek-mt7981-cmcc_rax3000m-initramfs-kernel.bin
-        #rm -rf immortalwrt-mediatek-mt7981-cmcc_rax3000m-squashfs-factory.bin
-        mv config.buildinfo r2c.buildinfo
-        #mv immortalwrt-mediatek-mt7981-cmcc_rax3000m-squashfs-sysupgrade.bin immortalwrt-2102-cmcc_rax3000m-nand-squashfs-sysupgrade.bin
+        mv config.buildinfo r2s.buildinfo
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
@@ -155,7 +142,7 @@ jobs:
         echo "release_tag=$(date +"%Y.%m.%d")-immo" >> $GITHUB_OUTPUT
         echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
         touch release.txt
-        echo "后台地址：192.168.11.1
+        echo "后台地址：192.168.1.2
               默认密码：password" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
