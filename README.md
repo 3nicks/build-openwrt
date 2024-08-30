@@ -6,5 +6,3 @@
     账号 ：root
 
     密码：
-
-下载地址：https://github.com/Huanyueyichen/build-openwrt/releases
