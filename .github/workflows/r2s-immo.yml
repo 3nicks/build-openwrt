@@ -10,7 +10,7 @@ env:
   REPO_BRANCH: master
   #FEEDS_CONF: immo/feeds.conf.default
   CONFIG_FILE: immo/r2s.config
-  DIY_SH: immo/diy-rockchip.sh
+  DIY_SH: immo/rockchip.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
