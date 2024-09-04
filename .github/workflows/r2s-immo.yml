@@ -2,16 +2,20 @@ name: r2s-immo
 on:
   repository_dispatch:
   workflow_dispatch:
+  # schedule:
+    # - cron: 0 17 ? * 1,5
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-23.05
+  REPO_BRANCH: master
+  #FEEDS_CONF: immo/feeds.conf.default
   CONFIG_FILE: immo/r2s.config
-  DIY_SH: immo/r2s-rockchip.sh
+  DIY_SH: immo/diy-rockchip.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
+
 
 jobs:
   build:
@@ -36,7 +40,7 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v4
-
+      
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -44,6 +48,7 @@ jobs:
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
         sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+        # sudo -E apt-get -qq install $(curl -fsSL https://raw.githubusercontent.com/Huanyueyichen/openwrt-list/master/openwrt-ubuntu-2204)
         sudo -E apt-get -qq install libfuse-dev
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
@@ -120,8 +125,8 @@ jobs:
         echo "release_tag=$(date +"%Y.%m.%d")-immo" >> $GITHUB_OUTPUT
         echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
         touch release.txt
-        echo "后台地址：192.168.1.2
-              默认密码：空" >> release.txt
+        echo "后台地址：192.168.11.1
+              默认密码：password" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware directory
@@ -141,7 +146,7 @@ jobs:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
-
+        
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2
       with:
