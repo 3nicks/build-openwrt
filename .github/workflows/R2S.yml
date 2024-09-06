@@ -109,7 +109,7 @@ jobs:
 
     - name: 加载自定义脚本
       run: |
-        fi       
+        [ -e files ] && mv files openwrt/files
         cat <<EOF >>openwrt/.config
         CONFIG_TARGET_rockchip=y
         CONFIG_TARGET_rockchip_armv8=y
