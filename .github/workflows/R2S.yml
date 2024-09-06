@@ -109,17 +109,7 @@ jobs:
 
     - name: 加载自定义脚本
       run: |
-#        [ -e files ] && mv files openwrt/files
-#        if [[ "${{ matrix.repo_info.repo_url }}" == "https://github.com/immortalwrt/immortalwrt" ]]; then
-#          rm -rf openwrt/files/etc/opkg/distfeeds.conf
-#          rm -rf openwrt/files/etc/firewall.user
-#          sed -i '21,25d' openwrt/files/etc/config/firewall
-#          echo "src/gz immortalwrt_base https://mirror.nju.edu.cn/immortalwrt/snapshots/packages/arm_cortex-a5_vfpv4/base" >> openwrt/files/etc/opkg/distfeeds.conf
-#          echo "src/gz immortalwrt_luci https://mirror.nju.edu.cn/immortalwrt/snapshots/packages/arm_cortex-a5_vfpv4/luci" >> openwrt/files/etc/opkg/distfeeds.conf
-#          echo "src/gz immortalwrt_packages https://mirror.nju.edu.cn/immortalwrt/snapshots/packages/arm_cortex-a5_vfpv4/packages" >> openwrt/files/etc/opkg/distfeeds.conf
-#          echo "src/gz immortalwrt_routing https://mirror.nju.edu.cn/immortalwrt/snapshots/packages/arm_cortex-a5_vfpv4/routing" >> openwrt/files/etc/opkg/distfeeds.conf
-#          echo "src/gz immortalwrt_telephony https://mirror.nju.edu.cn/immortalwrt/snapshots/packages/arm_cortex-a5_vfpv4/telephony" >> openwrt/files/etc/opkg/distfeeds.conf        
-#        fi       
+        fi       
         cat <<EOF >>openwrt/.config
         CONFIG_TARGET_rockchip=y
         CONFIG_TARGET_rockchip_armv8=y
