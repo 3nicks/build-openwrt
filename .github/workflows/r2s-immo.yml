@@ -113,7 +113,8 @@ jobs:
         rm -rf version.buildinfo
         rm -rf immortalwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf immortalwrt-rockchip-armv8-friendlyarm_nanopi-r2s.manifest
-        mv config.buildinfo r2s.buildinfo
+        rm -rf r2s.buildinfo
+        #mv config.buildinfo r2s.buildinfo
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
