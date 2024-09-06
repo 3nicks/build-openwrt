@@ -22,12 +22,6 @@ on:
         default: '600' 
         type: string
    
-      OP_author:
-        description: '定制作者'     
-        required: false
-        default: 'shiyu1314' 
-        type: string    
-
       CUSTOM_PLUGINS:
         description: '自定义插件名称，用空格分隔'
         required: false
@@ -87,7 +81,6 @@ jobs:
         echo "REPO_URL=${{ matrix.repo_info.repo_url }}" >> $GITHUB_ENV
         echo "REPO_BRANCH=${{ matrix.repo_info.branch }}" >> $GITHUB_ENV
         echo "OP_IP=${{ github.event.inputs.OP_IP }}" >> $GITHUB_ENV
-        echo "OP_author=${{ github.event.inputs.OP_author }}" >> $GITHUB_ENV
         echo "OP_rootfs=${{ github.event.inputs.OP_rootfs }}" >> $GITHUB_ENV
         echo "CUSTOM_PLUGINS=${{ github.event.inputs.CUSTOM_PLUGINS }}" >> $GITHUB_ENV
         echo "ENABLE_DHCP=${{ github.event.inputs.ENABLE_DHCP }}" >> $GITHUB_ENV
