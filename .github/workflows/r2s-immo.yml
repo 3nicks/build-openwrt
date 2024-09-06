@@ -106,15 +106,13 @@ jobs:
       run: |
         cd openwrt/bin/targets/*/*
         rm -rf packages
-        #rm -rf config.buildinfo
+        rm -rf config.buildinfo
         rm -rf feeds.buildinfo
         rm -rf sha256sums
         rm -rf profiles.json
         rm -rf version.buildinfo
         rm -rf immortalwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
         rm -rf immortalwrt-rockchip-armv8-friendlyarm_nanopi-r2s.manifest
-        rm -rf r2s.buildinfo
-        #mv config.buildinfo r2s.buildinfo
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
