@@ -13,7 +13,7 @@ on:
       OP_IP:
         description: '静态IP地址'     
         required: false
-        default: '192.168.2.2' 
+        default: '192.168.1.2' 
         type: string
 
       OP_rootfs:
@@ -92,7 +92,7 @@ jobs:
         echo "CUSTOM_PLUGINS=${{ github.event.inputs.CUSTOM_PLUGINS }}" >> $GITHUB_ENV
         echo "ENABLE_DHCP=${{ github.event.inputs.ENABLE_DHCP }}" >> $GITHUB_ENV
         if [[ "${{ matrix.repo_info.repo_url }}" == "https://github.com/openwrt/openwrt" ]]; then
-          echo "DIY_P1_SH=r2s-rockchip.sh" >> $GITHUB_ENV
+          echo "DIY_P1_SH=immo/r2s-rockchip.sh" >> $GITHUB_ENV
         else
           echo "DIY_P1_SH=sh/im.sh" >> $GITHUB_ENV
         fi
