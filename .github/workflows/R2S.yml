@@ -87,7 +87,7 @@ jobs:
         if [[ "${{ matrix.repo_info.repo_url }}" == "https://github.com/openwrt/openwrt" ]]; then
           echo "DIY_P1_SH=immo/r2s-rockchip.sh" >> $GITHUB_ENV
         else
-          echo "DIY_P1_SH=sh/im.sh" >> $GITHUB_ENV
+          echo "DIY_P1_SH=immo/r2s-rockchip.sh" >> $GITHUB_ENV
         fi
 
     - name: 克隆源代码
