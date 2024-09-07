@@ -96,7 +96,7 @@ jobs:
           ls openwrt/files/etc/uci-defaults
         else
           rm -rf openwrt/files/etc/uci-defaults/dhcp-lan
-          sed -i "s/192.168.1.1/${{ github.event.inputs.OP_IP }}/" openwrt/package/base-files/files/bin/config_generate
+          sed -i "s/192.168.1.1/${{ github.event.inputs.OP_IP }}/" package/base-files/files/bin/config_generate
           ls openwrt/files/etc/uci-defaults
         fi   
         done
