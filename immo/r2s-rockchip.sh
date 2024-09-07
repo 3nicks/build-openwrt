@@ -1,28 +1,5 @@
 #!/bin/bash
 
-rm -rf target/linux package/kernel package/boot package/firmware package/network/utils/fullconenat-nft
-
-mkdir new; cp -rf .git new/.git
-cd new
-git reset --hard origin/master
-
-cp -rf --parents target/linux package/kernel package/boot package/network/utils/fullconenat-nft package/firmware include/kernel* config/Config-images.in config/Config-kernel.in include/image*.mk include/trusted-firmware-a.mk scripts/ubinize-image.sh package/utils/bcm27xx-utils package/devel/perf ../
-cd ..
-
-echo 'src-git xd https://github.com/shiyu1314/openwrt-packages' >>feeds.conf.default
-git clone -b master --depth 1 --single-branch https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
-git clone -b v5-lua --depth 1 --single-branch https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
-git clone -b main --depth 1 --single-branch https://github.com/shiyu1314/homeproxy package/luci-app-homeproxy
-
-
-./scripts/feeds update -a
-rm -rf feeds/luci/applications/luci-app-homeproxy
-rm -rf feeds/packages/net/mosdns
-rm -rf feeds/packages/net/v2ray-geodata
-
-./scripts/feeds update -a
-./scripts/feeds install -a
-
 ## rockchip机型,默认内核5.15，修改内核为6.1
 # sed -i 's/PATCHVER:=5.15/PATCHVER:=6.1/g' target/linux/rockchip/Makefile
 
