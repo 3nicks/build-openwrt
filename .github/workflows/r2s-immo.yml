@@ -2,9 +2,19 @@ name: r2s-immo
 on:
   repository_dispatch:
   workflow_dispatch:
-  # schedule:
-    # - cron: 0 17 ? * 1,5
-
+    inputs:
+      ENABLE_DHCP:
+        description: '是否开启DHCP'     
+        required: false
+        default: 'false'
+        type: boolean
+        
+      OP_IP:
+        description: '静态IP地址'     
+        required: false
+        default: '192.168.1.2' 
+        type: string
+        
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: master
@@ -55,6 +65,11 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
+        
+    - name: 初始化变量
+      run: |
+        echo "ENABLE_DHCP=${{ github.event.inputs.ENABLE_DHCP }}" >> $GITHUB_ENV
+        echo "OP_IP=${{ github.event.inputs.OP_IP }}" >> $GITHUB_ENV
 
     - name: 克隆源代码
       working-directory: /workdir
@@ -76,6 +91,15 @@ jobs:
         chmod +x $DIY_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_SH
+        
+        if [[ "${{ github.event.inputs.ENABLE_DHCP }}" == "true" ]]; then
+          ls openwrt/files/etc/uci-defaults
+        else
+          rm -rf openwrt/files/etc/uci-defaults/dhcp-lan
+          sed -i "s/192.168.1.1/${{ github.event.inputs.OP_IP }}/" openwrt/package/base-files/files/bin/config_generate
+          ls openwrt/files/etc/uci-defaults
+        fi   
+        done
 
     - name: 下载 package
       id: package
@@ -123,8 +147,9 @@ jobs:
         echo "release_tag=$(date +"%Y.%m.%d")-immo" >> $GITHUB_OUTPUT
         echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
         touch release.txt
-        echo "后台地址：192.168.1.1
-              默认密码：password" >> release.txt
+        echo " 静  态IP：${{ github.event.inputs.OP_IP }}
+               DHCP状态：${{ github.event.inputs.ENABLE_DHCP }}
+               默认密码：无>> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: 上传固件目录
