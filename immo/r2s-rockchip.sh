@@ -10,7 +10,7 @@ sed -i 's,-SNAPSHOT,,g' package/base-files/image-config.in
 # sed -i 's,snapshots,,g' package/base-files/image-config.in
 
 ## 修改openwrt登陆地址,把下面的192.168.11.1修改成你想要的就可以了
-sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
+# sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
 
 # TTYD 免登录
 sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
