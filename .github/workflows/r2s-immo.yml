@@ -3,12 +3,6 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      ENABLE_DHCP:
-        description: '是否开启DHCP'     
-        required: false
-        default: 'false'
-        type: boolean
-        
       OP_IP:
         description: '静态IP地址'     
         required: false
@@ -91,15 +85,7 @@ jobs:
         chmod +x $DIY_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_SH
-        
-        if [[ "${{ github.event.inputs.ENABLE_DHCP }}" == "true" ]]; then
-          ls openwrt/files/
-        else
-          rm -rf openwrt/files/dhcp-lan
           sed -i "s/192.168.1.1/${{ github.event.inputs.OP_IP }}/" package/base-files/files/bin/config_generate
-          ls openwrt/files/
-        fi   
-        done
 
     - name: 下载 package
       id: package
