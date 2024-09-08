@@ -93,11 +93,11 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_SH
         
         if [[ "${{ github.event.inputs.ENABLE_DHCP }}" == "true" ]]; then
-          ls openwrt/files/etc/uci-defaults
+          ls openwrt/files/
         else
-          rm -rf openwrt/files/etc/uci-defaults/dhcp-lan
+          rm -rf openwrt/files/dhcp-lan
           sed -i "s/192.168.1.1/${{ github.event.inputs.OP_IP }}/" package/base-files/files/bin/config_generate
-          ls openwrt/files/etc/uci-defaults
+          ls openwrt/files/
         fi   
         done
 
