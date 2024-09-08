@@ -147,8 +147,7 @@ jobs:
         echo "release_tag=$(date +"%Y.%m.%d")-immo" >> $GITHUB_OUTPUT
         echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
         touch release.txt
-        echo"后台地址：${{ github.event.inputs.OP_IP }}
-             DHCP状态：${{ github.event.inputs.ENABLE_DHCP }}
+        echo "后台地址：192.168.11.1
               默认密码：password" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
