@@ -6,12 +6,11 @@ on:
     # - cron: 0 17 ? * 1,5
 
 env:
-  PPPOE_USERNAME: ${{ secrets.PPPOE_USERNAME }}
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: master
   #FEEDS_CONF: immo/feeds.conf.default
-  CONFIG_FILE: immo/r2c.config
-  DIY_SH: immo/diy-rockchip.sh
+  CONFIG_FILE: immo/r2s.config
+  DIY_SH: immo/r2s-rockchip.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -68,14 +67,6 @@ jobs:
       run: |
         #[ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         
-    - name: Default PPPOE Setting
-      if: env.PPPOE_USERNAME && env.PPPOE_PASSWD
-      run: |
-        # 修改wan口默认pppoe
-        sed -i 's/2:-dhcp/2:-pppoe/g' openwrt/package/base-files/files/lib/functions/uci-defaults.sh
-        # 设置pppoe拨号账户密码
-        sed -i "s/username='username'/username='${{ env.PPPOE_USERNAME }}'/g" openwrt/package/base-files/files/bin/config_generate
-
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
 
