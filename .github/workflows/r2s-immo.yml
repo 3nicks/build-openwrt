@@ -1,23 +1,26 @@
-name: r2c-main
-
+name: r2c-immo
 on:
   repository_dispatch:
   workflow_dispatch:
+  # schedule:
+    # - cron: 0 17 ? * 1,5
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: main
+  PPPOE_USERNAME: ${{ secrets.PPPOE_USERNAME }}
+  REPO_URL: https://github.com/immortalwrt/immortalwrt
+  REPO_BRANCH: master
   #FEEDS_CONF: immo/feeds.conf.default
-  CONFIG_FILE: immo/r2s.config
-  DIY_SH: immo/r2s-rockchip.sh
+  CONFIG_FILE: immo/r2c.config
+  DIY_SH: immo/diy-rockchip.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
 
+
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
     
     - name: Free Disk Space (Ubuntu)
@@ -43,9 +46,11 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install $(curl -fsSL https://raw.githubusercontent.com/Huanyueyichen/openwrt-list/master/openwrt-ubuntu-2404)
+        sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+        # sudo -E apt-get -qq install $(curl -fsSL https://raw.githubusercontent.com/Huanyueyichen/openwrt-list/master/openwrt-ubuntu-2204)
+        sudo -E apt-get -qq install libfuse-dev
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -63,6 +68,14 @@ jobs:
       run: |
         #[ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         
+    - name: Default PPPOE Setting
+      if: env.PPPOE_USERNAME && env.PPPOE_PASSWD
+      run: |
+        # 修改wan口默认pppoe
+        sed -i 's/2:-dhcp/2:-pppoe/g' openwrt/package/base-files/files/lib/functions/uci-defaults.sh
+        # 设置pppoe拨号账户密码
+        sed -i "s/username='username'/username='${{ env.PPPOE_USERNAME }}'/g" openwrt/package/base-files/files/bin/config_generate
+
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
 
@@ -108,12 +121,12 @@ jobs:
         rm -rf packages
         #rm -rf config.buildinfo
         rm -rf feeds.buildinfo
-        rm -rf profiles.json
         rm -rf sha256sums
+        rm -rf profiles.json
         rm -rf version.buildinfo
-        rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
-        rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s.manifest
-        rm config.buildinfo r2s_main.buildinfo
+        rm -rf immortalwrt-rockchip-armv8-friendlyarm_nanopi-r2s-rootfs.tar.gz
+        rm -rf immortalwrt-rockchip-armv8-friendlyarm_nanopi-r2d.manifest
+        rm config.buildinfo r2s.buildinfo
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
@@ -121,12 +134,19 @@ jobs:
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(date +"%Y.%m.%d")-main" >> $GITHUB_OUTPUT
+        echo "release_tag=$(date +"%Y.%m.%d")-immo" >> $GITHUB_OUTPUT
         echo "release_date=$(date +"%Y.%m.%d")" >> $GITHUB_OUTPUT
         touch release.txt
         echo "后台地址：192.168.1.2
               默认密码：password" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: ${{ env.FIRMWARE }}
 
     - name: Upload firmware to release
       uses: softprops/action-gh-release@v2
@@ -134,10 +154,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: ${{ steps.tag.outputs.release_date }} openwrt
+        name: ${{ steps.tag.outputs.release_date }} immortalwrt
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
+
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2
       with:
